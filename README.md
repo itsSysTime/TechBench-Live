@@ -65,6 +65,6 @@ This project does NOT:
 ## Known errors
 _We encountered a problem processing your request. Please try again later._ - Insider Preview request / not signed into Microsoft account, fix: Sign into Microsoft account
 
-_Some users, entities and locations are banned from using this service_ - Generic error, fix: Clear `https://www.microsoft.com` cookies and/or wait
+_Some users, entities and locations are banned from using this service_ - SDS occasionally flags stale or inconsistent cookies. Fix: Clear `*.microsoft.com` and `*.live.com` cookies in your browser and/or renew your IP in the Command Prompt: `ipconfig /renew`. If you have a VPN, turn it off completely or change your server.
 
 _GatewayExceptionResponse_ - Microsoft pulled this .ISO media from its servers. No fix.
