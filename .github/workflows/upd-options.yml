@@ -44,7 +44,7 @@ jobs:
 
       - name: Extract new IDs from option-values.json
         run: |
-          jq -r '.products | keys[]' option-values.json > new_ids.tmp
+          jq -r '.products | keys[]' option-values.json | sort -n > new_ids.tmp
 
       - name: Compute missing IDs
         run: |
