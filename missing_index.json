@@ -1563,5 +1563,10 @@
   {"id":"3636","label":"Windows 11 Enterprise VL Insider Preview - Build 28020.2623"},
   {"id":"3637","label":"Windows 11 Client Insider Preview - Build 28020.2623"},
   {"id":"3638","label":"Windows 11 Client ARM64 Insider Preview - Build 28020.2623"},
-  {"id":"3639","label":"Windows 11 China Only Insider Preview - Build 28020.2623"}
+  {"id":"3639","label":"Windows 11 China Only Insider Preview - Build 28020.2623"},
+  {"id":"3640","label":"Microsoft Server Language and Optional Features Preview  - Build 29641.1000"},
+  {"id":"3641","label":"Windows Server Datacenter Azure Edition ISO - Build 29641.1000"},
+  {"id":"3642","label":"Windows Server LTSC Preview VHDX - 29641.1000"},
+  {"id":"3643","label":"Windows Server vNext LTSC Preview - Build 29641.1000"},
+  {"id":"3644","label":"Windows Server Datacenter Azure Edition VHDX - Build 29641.1000"}
 ]
