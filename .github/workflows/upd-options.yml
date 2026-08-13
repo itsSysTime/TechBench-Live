@@ -1,0 +1,104 @@
+name: Append new options to tb.html
+
+on:
+  workflow_run:
+    workflows: ["Generate option-values.json"]
+    types:
+      - completed
+  workflow_dispatch:
+
+jobs:
+  update-html:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+          clean: false
+
+      - name: Ensure local main is up-to-date
+        run: |
+          # Find the branch name (fallback to 'main' if not found)
+          BRANCH=${GITHUB_REF#refs/heads/}
+          if [ -z "$BRANCH" ] || [ "$BRANCH" = "refs/heads/" ]; then
+            BRANCH=main
+          fi
+      
+          git fetch --no-tags --prune origin +refs/heads/*:refs/remotes/origin/*
+          # If the local branch exists, check it out; otherwise create it from origin
+          if git rev-parse --verify "$BRANCH" >/dev/null 2>&1; then
+            git checkout "$BRANCH"
+          else
+            git checkout -b "$BRANCH" "origin/$BRANCH"
+          fi
+          git pull --rebase origin "$BRANCH" || true
+
+
+      - name: Extract highest existing ID
+        run: |
+          grep -oP '<option\s+value="\K[0-9]+' tb.html | sort -n > existing_ids.tmp
+          highest_existing=$(tail -n 1 existing_ids.tmp)
+          echo "$highest_existing" > highest_existing.tmp
+
+      - name: Extract all IDs from option-values.json
+        run: |
+          jq -r '.products | keys[]' option-values.json | sort -n > new_ids.tmp
+
+      - name: Find IDs higher than highest existing
+        run: |
+          highest_existing=$(cat highest_existing.tmp)
+          awk -v max="$highest_existing" '$1 > max' new_ids.tmp > missing_ids.tmp
+
+      - name: Insert missing IDs numerically
+        run: |
+          cp tb.html tb.new.html
+
+          while read -r id; do
+            # Get product label
+            label=$(jq -r --arg id "$id" '.products[$id]' option-values.json)
+            option_line="<option value=\"$id\">$label</option>"
+
+            # Insert after predecessor if it exists
+            prev=$((id - 1))
+            if grep -q "value=\"$prev\"" tb.new.html; then
+              awk -v prev="$prev" -v opt="$option_line" '
+                { print }
+                $0 ~ "value=\""prev"\"" { print opt }
+              ' tb.new.html > tb.tmp
+            else
+              # Insert at end of block before OPT-END
+              awk -v opt="$option_line" '
+                /<!-- OPT-END -->/ { print opt }
+                { print }
+              ' tb.new.html > tb.tmp
+            fi
+
+            mv tb.tmp tb.new.html
+          done < missing_ids.tmp
+
+          mv tb.new.html tb.html
+
+      - name: Commit updated tb.html and index
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add tb.html missing_index.json || true
+          git commit -m "Append new options to tb.html and add missing_index.json" || echo "No changes"
+          git push || true
+
+      - name: Upload artifact for GitHub Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+  deploy:
+    needs: update-html
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    steps:
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
