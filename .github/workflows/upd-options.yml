@@ -124,6 +124,7 @@ jobs:
                   # Insert id into existing array after index i
                   idx=$((i + 1))
                   existing=("${existing[@]:0:$idx}" "$id" "${existing[@]:$idx}")
+                  printf "%s\n" "${existing[@]}" > existing_ids.tmp
                   placed=true
                   break
                 fi
