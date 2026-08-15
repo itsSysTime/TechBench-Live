@@ -3287,6 +3287,8 @@
     "3641": "Windows Server Datacenter Azure Edition ISO - Build 29641.1000",
     "3642": "Windows Server LTSC Preview VHDX - 29641.1000",
     "3643": "Windows Server vNext LTSC Preview - Build 29641.1000",
-    "3644": "Windows Server Datacenter Azure Edition VHDX - Build 29641.1000"
+    "3644": "Windows Server Datacenter Azure Edition VHDX - Build 29641.1000",
+    "3645": "Windows ADK Insider Preview - Build 29639.1000",
+    "3646": "Windows Preinstallation Environment - Build 29639.1000"
   }
 }
